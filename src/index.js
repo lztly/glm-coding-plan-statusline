@@ -6,6 +6,33 @@
 const api = require('./api');
 const formatter = require('./formatter');
 const cache = require('./cache');
+const bridge = require('./bridge');
+
+/**
+ * 从原始输入中提取会话信息
+ * @param {string|object} input - Claude Code 传递的上下文 JSON
+ * @returns {{sessionId: string, remainingPercentage: number, usedPct: number}}
+ */
+function extractSessionInfo(input) {
+  try {
+    const data = typeof input === 'string' ? JSON.parse(input) : input;
+    const sessionId = data?.session_id || '';
+    const remaining = data?.context_window?.remaining_percentage;
+
+    // 计算已使用百分比（与 GSD 逻辑一致）
+    // Claude Code 预留 ~16.5% 用于 autocompact 缓冲区
+    const AUTO_COMPACT_BUFFER_PCT = 16.5;
+    let usedPct = 0;
+    if (remaining != null) {
+      const usableRemaining = Math.max(0, ((remaining - AUTO_COMPACT_BUFFER_PCT) / (100 - AUTO_COMPACT_BUFFER_PCT)) * 100);
+      usedPct = Math.max(0, Math.min(100, Math.round(100 - usableRemaining)));
+    }
+
+    return { sessionId, remainingPercentage: remaining || 0, usedPct };
+  } catch (e) {
+    return { sessionId: '', remainingPercentage: 0, usedPct: 0 };
+  }
+}
 
 /**
  * 生成状态栏
@@ -16,6 +43,16 @@ const cache = require('./cache');
 async function generateStatusLine(input, options = {}) {
   // 解析上下文
   const context = formatter.parseContext(input);
+
+  // 提取会话信息并写入 bridge 文件（供 GSD context-monitor 读取）
+  const sessionInfo = extractSessionInfo(input);
+  if (sessionInfo.sessionId) {
+    bridge.writeBridge({
+      sessionId: sessionInfo.sessionId,
+      remainingPercentage: sessionInfo.remainingPercentage,
+      usedPct: sessionInfo.usedPct
+    });
+  }
 
   // 获取使用量数据 (带缓存)
   const usageData = await fetchUsageDataWithCache();
@@ -84,5 +121,6 @@ module.exports = {
   fetchUsageDataWithCache,
   api,
   formatter,
-  cache
+  cache,
+  bridge
 };

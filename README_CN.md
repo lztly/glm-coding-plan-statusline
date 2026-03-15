@@ -29,6 +29,7 @@
 - **智能颜色提示** - 根据使用率自动变色警告
 - **智能缓存** - 减少 API 请求，提升响应速度
 - **灵活配置** - 支持多种显示模式
+- **GSD Bridge 兼容** - 与 GSD context-monitor 配合，实现低上下文警告
 
 ## 系统要求
 
@@ -74,6 +75,35 @@ GLM-5 │ Sess:160.0K │ Day:42.8M │ Mon:979.2M
 | **5H** | 5小时配额已使用 | 绿(<50%) / 黄(50-80%) / 红(>80%) |
 | **MCP** | 月度配额已使用 | 绿(<50%) / 黄(50-80%) / 红(>80%) |
 | **Context** | 上下文使用率 | 绿(<50%) / 黄(50-80%) / 红(>80%) |
+
+## GSD Bridge 兼容性
+
+本状态栏与 [Get Shit Done (GSD)](https://github.com/discreteprojects/get-shit-done) 框架的上下文监控功能兼容。
+
+### 工作原理
+
+当 Claude Code 调用状态栏时，会自动将上下文指标写入 bridge 文件：
+
+```
+/tmp/claude-ctx-{session_id}.json
+```
+
+该文件可被 GSD 的 `gsd-context-monitor` hook 读取，用于向 Agent 注入低上下文警告。
+
+### Bridge 文件格式
+
+```json
+{
+  "session_id": "abc123",
+  "remaining_percentage": 65,
+  "used_pct": 35,
+  "timestamp": 1742053200
+}
+```
+
+### 与 GSD 配合使用
+
+如果你已安装 GSD，context-monitor hook 会自动读取这些指标，并在上下文不足时向 Agent 发出警告（≤35% 警告，≤25% 严重）。
 
 ## 配置选项
 

@@ -29,6 +29,7 @@
 - **Smart Color Alerts** - Automatic color change warnings based on usage rate
 - **Smart Caching** - Reduce API requests, improve response speed
 - **Flexible Configuration** - Support multiple display modes
+- **GSD Bridge Compatible** - Works with GSD context-monitor for low context warnings
 
 ## Requirements
 
@@ -74,6 +75,35 @@ GLM-5 │ Sess:160.0K │ Day:42.8M │ Mon:979.2M
 | **5H** | 5-hour quota used | Green(<50%) / Yellow(50-80%) / Red(>80%) |
 | **MCP** | Monthly quota used | Green(<50%) / Yellow(50-80%) / Red(>80%) |
 | **Context** | Context window usage | Green(<50%) / Yellow(50-80%) / Red(>80%) |
+
+## GSD Bridge Compatibility
+
+This statusline is compatible with [Get Shit Done (GSD)](https://github.com/discreteprojects/get-shit-done) framework's context monitoring feature.
+
+### How It Works
+
+When Claude Code calls the statusline, it automatically writes context metrics to a bridge file:
+
+```
+/tmp/claude-ctx-{session_id}.json
+```
+
+This file can be read by GSD's `gsd-context-monitor` hook to inject low context warnings to the agent.
+
+### Bridge File Format
+
+```json
+{
+  "session_id": "abc123",
+  "remaining_percentage": 65,
+  "used_pct": 35,
+  "timestamp": 1742053200
+}
+```
+
+### Using with GSD
+
+If you have GSD installed, the context-monitor hook will automatically read these metrics and warn the agent when context is running low (≤35% warning, ≤25% critical).
 
 ## Options
 
