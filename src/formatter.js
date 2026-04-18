@@ -201,7 +201,9 @@ function formatStatusLine(context, usageData, options = {}) {
   if (showMCP) {
     const bar = makeProgressBar(mcpUsed, 10);
     const color = getPercentColor(mcpUsed);
-    barParts.push(`MCP ${bar} ${color}${mcpUsed}%${COLORS.reset}`);
+    const resetIn = formatRemainingTime(usageData?.quota?.mcpUsage?.nextResetTime);
+    const resetLabel = resetIn ? ` ${COLORS.dim}${resetIn}${COLORS.reset}` : '';
+    barParts.push(`MCP ${bar} ${color}${mcpUsed}%${COLORS.reset}${resetLabel}`);
   }
 
   const line2 = barParts.join(' │ ');
