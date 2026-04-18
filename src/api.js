@@ -218,8 +218,8 @@ async function fetchQuotaLimit() {
         nextResetTime: limit.nextResetTime || null
       };
     }
-    if (limit.type === 'TOKENS_LIMIT') {
-      // 5 小时配额（API 标签搞反了，TOKENS_LIMIT 实际是 5H）
+    if (limit.type === 'TOKENS_LIMIT' && limit.unit === 3 && limit.number === 5) {
+      // 5 小时配额
       fiveHourQuota = {
         percentage: limit.percentage || 0,
         remaining: 100 - (limit.percentage || 0),
