@@ -125,6 +125,22 @@ function formatRemainingTime(timestamp) {
   return `~${totalHours}h`;
 }
 
+function formatDetailedRemainingTime(timestamp) {
+  if (!timestamp) return '';
+
+  const diffMs = timestamp - Date.now();
+  if (diffMs <= 0) return '0m';
+
+  const totalMinutes = Math.ceil(diffMs / (1000 * 60));
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+
+  if (hours > 0) {
+    return `${hours}h${minutes}m`;
+  }
+  return `${minutes}m`;
+}
+
 /**
  * 生成状态栏输出
  */
@@ -179,31 +195,20 @@ function formatStatusLine(context, usageData, options = {}) {
 
   if (showContext) {
     const bar = makeProgressBar(context.contextUsed, 10);
-    barParts.push(`Ctx ${bar} ${context.contextUsed}% (${contextDisplay})`);
+    barParts.push(`Ctx ${bar} ${context.contextUsed}%`);
   }
 
   if (showFiveHours) {
-    const bar = makeProgressBar(fiveHourUsed, 10);
-    const color = getPercentColor(fiveHourUsed);
-    const resetIn = formatRemainingTime(usageData?.quota?.fiveHourQuota?.nextResetTime);
-    const resetLabel = resetIn ? ` ${COLORS.dim}${resetIn}${COLORS.reset}` : '';
-    barParts.push(`5h ${bar} ${color}${fiveHourUsed}%${COLORS.reset}${resetLabel}`);
-  }
-
-  if (showFiveHours) {
-    const bar = makeProgressBar(weeklyUsed, 10);
-    const color = getPercentColor(weeklyUsed);
-    const resetIn = formatRemainingTime(usageData?.quota?.weeklyQuota?.nextResetTime);
-    const resetLabel = resetIn ? ` ${COLORS.dim}${resetIn}${COLORS.reset}` : '';
-    barParts.push(`7d ${bar} ${color}${weeklyUsed}%${COLORS.reset}${resetLabel}`);
+    const fiveHourColor = getPercentColor(fiveHourUsed);
+    const fiveHourResetIn = formatDetailedRemainingTime(usageData?.quota?.fiveHourQuota?.nextResetTime);
+    const fiveHourResetLabel = fiveHourResetIn ? `${COLORS.dim}(${fiveHourResetIn})${COLORS.reset}` : '';
+    const weeklyColor = getPercentColor(weeklyUsed);
+    barParts.push(`5h${fiveHourColor}${fiveHourUsed}%${COLORS.reset}${fiveHourResetLabel} 7d${weeklyColor}${weeklyUsed}%${COLORS.reset}`);
   }
 
   if (showMCP) {
-    const bar = makeProgressBar(mcpUsed, 10);
     const color = getPercentColor(mcpUsed);
-    const resetIn = formatRemainingTime(usageData?.quota?.mcpUsage?.nextResetTime);
-    const resetLabel = resetIn ? ` ${COLORS.dim}${resetIn}${COLORS.reset}` : '';
-    barParts.push(`MCP ${bar} ${color}${mcpUsed}%${COLORS.reset}${resetLabel}`);
+    barParts.push(`MCP ${color}${mcpUsed}%${COLORS.reset}`);
   }
 
   const line2 = barParts.join(' │ ');
@@ -239,6 +244,7 @@ module.exports = {
   parseContext,
   formatResetTime,
   formatRemainingTime,
+  formatDetailedRemainingTime,
   formatStatusLine,
   formatCompactStatusLine
 };
