@@ -81,9 +81,9 @@ The generated `.tgz` file is only needed for installation and can be deleted aft
 
 ## Display Example
 
-```
+``` 
 GLM-5 │ Sess:160.0K │ Day:42.8M │ Mon:979.2M
-5H ██░░░░░░ 22% │ MCP ███░░░░░ 28% │ Context █████░░░ 68% (200K)
+Ctx █████░░░░░ 68% │ 5h22%(1h30m) 7d41% │ MCP 28%
 ```
 
 ### Fields
