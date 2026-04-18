@@ -52,6 +52,33 @@ Add to `~/.claude/settings.json`:
 
 Save and restart Claude Code to see the status bar!
 
+## Local Packaging and Installation
+
+If you have modified this repository locally and want to install your own build instead of the npm registry version:
+
+```bash
+# Generate a local tarball in the current directory
+npm pack
+
+# Install the tarball globally
+npm install -g ./wangjs-jacky-glm-coding-plan-statusline-1.6.0.tgz
+```
+
+After installation, you can configure Claude Code to call the installed command directly:
+
+```json
+{
+  "statusLine": {
+    "type": "command",
+    "command": "glm-statusline"
+  }
+}
+```
+
+If your global npm directory requires elevated permissions, use `sudo npm install -g ...` or install with your own npm prefix.
+
+The generated `.tgz` file is only needed for installation and can be deleted afterwards.
+
 ## Display Example
 
 ```

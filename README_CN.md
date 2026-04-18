@@ -52,6 +52,33 @@
 
 保存后重新打开 Claude Code 即可看到状态栏！
 
+## 本地打包与安装
+
+如果你在本地修改了仓库代码，并希望安装自己的版本而不是 npm 上的版本，可以执行：
+
+```bash
+# 在当前目录生成本地安装包
+npm pack
+
+# 全局安装这个 tgz 包
+npm install -g ./wangjs-jacky-glm-coding-plan-statusline-1.6.0.tgz
+```
+
+安装完成后，可以把 Claude Code 配置改成直接调用已安装命令：
+
+```json
+{
+  "statusLine": {
+    "type": "command",
+    "command": "glm-statusline"
+  }
+}
+```
+
+如果你的全局 npm 目录需要更高权限，可以使用 `sudo npm install -g ...`，或者改用你自己的 npm prefix。
+
+生成的 `.tgz` 文件仅用于安装，安装完成后可以删除。
+
 ## 显示效果
 
 ```
