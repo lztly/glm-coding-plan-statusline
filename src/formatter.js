@@ -110,6 +110,21 @@ function formatResetTime(timestamp) {
   return `${hours}:${minutes}`;
 }
 
+function formatRemainingTime(timestamp) {
+  if (!timestamp) return '';
+
+  const diffMs = timestamp - Date.now();
+  if (diffMs <= 0) return '~0m';
+
+  const totalHours = Math.ceil(diffMs / (1000 * 60 * 60));
+  const totalDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffMs >= 1000 * 60 * 60 * 24) {
+    return `~${totalDays}d`;
+  }
+  return `~${totalHours}h`;
+}
+
 /**
  * 生成状态栏输出
  */
@@ -135,6 +150,7 @@ function formatStatusLine(context, usageData, options = {}) {
   // 配额数据
   const mcpUsed = usageData?.quota?.mcpUsage?.percentage || 0;
   const fiveHourUsed = usageData?.quota?.fiveHourQuota?.percentage || 0;
+  const weeklyUsed = usageData?.quota?.weeklyQuota?.percentage || 0;
 
   // 月度/日度数据
   const monthlyTokens = usageData?.monthly?.totalTokens || 0;
@@ -161,23 +177,31 @@ function formatStatusLine(context, usageData, options = {}) {
   // 第二行：所有进度条
   const barParts = [];
 
+  if (showContext) {
+    const bar = makeProgressBar(context.contextUsed, 10);
+    barParts.push(`Ctx ${bar} ${context.contextUsed}% (${contextDisplay})`);
+  }
+
   if (showFiveHours) {
-    const bar = makeProgressBar(fiveHourUsed, 8);
+    const bar = makeProgressBar(fiveHourUsed, 10);
     const color = getPercentColor(fiveHourUsed);
-    const resetTime = formatResetTime(usageData?.quota?.fiveHourQuota?.nextResetTime);
-    const resetLabel = resetTime ? ` ↻${resetTime}` : '';
-    barParts.push(`5H ${bar}${color}${fiveHourUsed}%${resetLabel}${COLORS.reset}`);
+    const resetIn = formatRemainingTime(usageData?.quota?.fiveHourQuota?.nextResetTime);
+    const resetLabel = resetIn ? ` ${COLORS.dim}${resetIn}${COLORS.reset}` : '';
+    barParts.push(`5h ${bar} ${color}${fiveHourUsed}%${COLORS.reset}${resetLabel}`);
+  }
+
+  if (showFiveHours) {
+    const bar = makeProgressBar(weeklyUsed, 10);
+    const color = getPercentColor(weeklyUsed);
+    const resetIn = formatRemainingTime(usageData?.quota?.weeklyQuota?.nextResetTime);
+    const resetLabel = resetIn ? ` ${COLORS.dim}${resetIn}${COLORS.reset}` : '';
+    barParts.push(`7d ${bar} ${color}${weeklyUsed}%${COLORS.reset}${resetLabel}`);
   }
 
   if (showMCP) {
-    const bar = makeProgressBar(mcpUsed, 8);
+    const bar = makeProgressBar(mcpUsed, 10);
     const color = getPercentColor(mcpUsed);
-    barParts.push(`MCP ${bar}${color}${mcpUsed}%${COLORS.reset}`);
-  }
-
-  if (showContext) {
-    const bar = makeProgressBar(context.contextUsed, 8);
-    barParts.push(`Context ${bar}${context.contextUsed}% (${contextDisplay})`);
+    barParts.push(`MCP ${bar} ${color}${mcpUsed}%${COLORS.reset}`);
   }
 
   const line2 = barParts.join(' │ ');
@@ -212,6 +236,7 @@ module.exports = {
   getPercentColor,
   parseContext,
   formatResetTime,
+  formatRemainingTime,
   formatStatusLine,
   formatCompactStatusLine
 };

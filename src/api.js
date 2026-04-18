@@ -25,11 +25,27 @@ const PLATFORMS = {
   }
 };
 
+function getMonitorHost() {
+  const rawBaseUrl = process.env.ANTHROPIC_BASE_URL || '';
+
+  if (!rawBaseUrl) {
+    return PLATFORMS.ZHIPU.baseUrl;
+  }
+
+  try {
+    return new URL(rawBaseUrl).hostname || PLATFORMS.ZHIPU.baseUrl;
+  } catch (e) {
+    return rawBaseUrl
+      .replace(/^https?:\/\//, '')
+      .split('/')[0] || PLATFORMS.ZHIPU.baseUrl;
+  }
+}
+
 /**
  * 检测当前平台
  */
 function detectPlatform() {
-  const baseUrl = process.env.ANTHROPIC_BASE_URL || '';
+  const baseUrl = getMonitorHost();
   if (baseUrl.includes('api.z.ai')) {
     return 'ZAI';
   }
@@ -204,6 +220,7 @@ async function fetchQuotaLimit() {
 
   let mcpUsage = { percentage: 0, current: 0, total: 1000 };
   let fiveHourQuota = { percentage: 0, remaining: 100 };
+  let weeklyQuota = { percentage: 0, remaining: 100 };
   let tokenUsage = { percentage: 0 };
 
   for (const limit of limits) {
@@ -229,11 +246,20 @@ async function fetchQuotaLimit() {
         percentage: limit.percentage || 0
       };
     }
+    if (limit.type === 'TOKENS_LIMIT' && limit.unit === 6 && limit.number === 1) {
+      // 7 天配额
+      weeklyQuota = {
+        percentage: limit.percentage || 0,
+        remaining: 100 - (limit.percentage || 0),
+        nextResetTime: limit.nextResetTime || null
+      };
+    }
   }
 
   return {
     mcpUsage,
     fiveHourQuota,
+    weeklyQuota,
     tokenUsage,
     level: data?.data?.level || data?.level || 'pro'
   };

@@ -101,6 +101,9 @@ async function fetchUsageDataWithCache() {
         if (!quota.fiveHourQuota?.nextResetTime && oldQuota.fiveHourQuota?.nextResetTime) {
           quota.fiveHourQuota = { ...quota.fiveHourQuota, nextResetTime: oldQuota.fiveHourQuota.nextResetTime };
         }
+        if (!quota.weeklyQuota?.nextResetTime && oldQuota.weeklyQuota?.nextResetTime) {
+          quota.weeklyQuota = { ...quota.weeklyQuota, nextResetTime: oldQuota.weeklyQuota.nextResetTime };
+        }
       }
       cache.writeCache('quota', quota);
     }
