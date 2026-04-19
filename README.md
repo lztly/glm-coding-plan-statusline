@@ -92,7 +92,7 @@ Ctx █████░░░░░ 68% │ 5h22%(1h30m) 7d41% │ MCP 28%
 | Field | Description | Color |
 |-------|-------------|-------|
 | **GLM-5** | Current model | Cyan bold |
-| **glm-coding-plan-statusline (main*)** | Current directory and Git branch | Default, `*` gray |
+| **glm-coding-plan-statusline (main\*)** | Current directory and Git branch | Default, `*` gray |
 | **Sess:160.0K** | Session tokens | Gray |
 | **Day:42.8M** | Daily tokens | Default |
 | **Mon:979.2M** | Monthly tokens | Blue |

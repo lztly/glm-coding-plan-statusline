@@ -92,7 +92,7 @@ Ctx █████░░░░░ 68% │ 5h22%(1h30m) 7d41% │ MCP 28%
 | 字段 | 说明 | 颜色 |
 |------|------|------|
 | **GLM-5** | 当前模型 | 青色加粗 |
-| **glm-coding-plan-statusline (main*)** | 当前目录与 Git 分支 | 默认，`*` 灰色 |
+| **glm-coding-plan-statusline (main\*)** | 当前目录与 Git 分支 | 默认，`*` 灰色 |
 | **Sess:160.0K** | 当前会话 Token | 灰色 |
 | **Day:42.8M** | 今日 Token 消耗 | 默认 |
 | **Mon:979.2M** | 当月 Token 消耗 | 蓝色 |
