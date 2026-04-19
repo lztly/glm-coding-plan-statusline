@@ -129,7 +129,7 @@ function formatDetailedRemainingTime(timestamp) {
   if (!timestamp) return '';
 
   const diffMs = timestamp - Date.now();
-  if (diffMs <= 0) return '0m';
+  if (diffMs <= 0) return '';
 
   const totalMinutes = Math.ceil(diffMs / (1000 * 60));
   const hours = Math.floor(totalMinutes / 60);
