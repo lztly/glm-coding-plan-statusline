@@ -92,6 +92,7 @@ Ctx █████░░░░░ 68% │ 5h22%(1h30m) 7d41% │ MCP 28%
 | Field | Description | Color |
 |-------|-------------|-------|
 | **GLM-5** | Current model | Cyan bold |
+| **glm-coding-plan-statusline (main*)** | Current directory and Git branch | Default, `*` gray |
 | **Sess:160.0K** | Session tokens | Gray |
 | **Day:42.8M** | Daily tokens | Default |
 | **Mon:979.2M** | Monthly tokens | Blue |
@@ -99,9 +100,10 @@ Ctx █████░░░░░ 68% │ 5h22%(1h30m) 7d41% │ MCP 28%
 **Line 2: Quota Progress Bars**
 | Field | Description | Color Rules |
 |-------|-------------|-------------|
-| **5H** | 5-hour quota used | Green(<50%) / Yellow(50-80%) / Red(>80%) |
+| **Ctx** | Context window usage | Green(<50%) / Yellow(50-80%) / Red(>80%) |
+| **5h** | 5-hour quota used and reset countdown | Green(<50%) / Yellow(50-80%) / Red(>80%) |
+| **7d** | 7-day quota used | Green(<50%) / Yellow(50-80%) / Red(>80%) |
 | **MCP** | Monthly quota used | Green(<50%) / Yellow(50-80%) / Red(>80%) |
-| **Context** | Context window usage | Green(<50%) / Yellow(50-80%) / Red(>80%) |
 
 ## GSD Bridge Compatibility
 
