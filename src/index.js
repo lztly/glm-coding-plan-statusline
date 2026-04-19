@@ -7,6 +7,7 @@ const api = require('./api');
 const formatter = require('./formatter');
 const cache = require('./cache');
 const bridge = require('./bridge');
+const { execFileSync } = require('child_process');
 
 /**
  * 从原始输入中提取会话信息
@@ -34,6 +35,41 @@ function extractSessionInfo(input) {
   }
 }
 
+function getGitBranch(currentDir) {
+  if (!currentDir) return '';
+
+  try {
+    const branch = execFileSync('git', ['branch', '--show-current'], {
+      cwd: currentDir,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+      timeout: 200
+    }).trim();
+
+    if (branch) return branch;
+  } catch (e) {
+    // 忽略非 Git 目录或 git 不可用
+  }
+
+  try {
+    return execFileSync('git', ['rev-parse', '--short', 'HEAD'], {
+      cwd: currentDir,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+      timeout: 200
+    }).trim();
+  } catch (e) {
+    return '';
+  }
+}
+
+function enrichContext(context) {
+  return {
+    ...context,
+    gitBranch: getGitBranch(context.currentDir)
+  };
+}
+
 /**
  * 生成状态栏
  * @param {string|object} input - Claude Code 传递的上下文 JSON
@@ -42,7 +78,7 @@ function extractSessionInfo(input) {
  */
 async function generateStatusLine(input, options = {}) {
   // 解析上下文
-  const context = formatter.parseContext(input);
+  const context = enrichContext(formatter.parseContext(input));
 
   // 提取会话信息并写入 bridge 文件（供 GSD context-monitor 读取）
   const sessionInfo = extractSessionInfo(input);
@@ -126,7 +162,7 @@ async function fetchUsageDataWithCache() {
  * 仅使用上下文数据生成状态栏 (无网络请求)
  */
 function generateLocalStatusLine(input, options = {}) {
-  const context = formatter.parseContext(input);
+  const context = enrichContext(formatter.parseContext(input));
   return formatter.formatStatusLine(context, {}, { ...options, showMCP: false, showMonthly: false, showDaily: false });
 }
 

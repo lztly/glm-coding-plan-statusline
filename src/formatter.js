@@ -50,6 +50,18 @@ function formatContextSize(size) {
   return size.toString();
 }
 
+function formatDirectoryName(currentDir, gitBranch) {
+  if (!currentDir) return '';
+
+  const dirName = currentDir.replace(/[\\/]+$/, '').split(/[\\/]/).pop();
+  if (!dirName) return '';
+
+  if (gitBranch) {
+    return `${dirName} (${gitBranch}${COLORS.dim}*${COLORS.reset})`;
+  }
+  return dirName;
+}
+
 /**
  * 根据百分比获取颜色
  */
@@ -178,6 +190,11 @@ function formatStatusLine(context, usageData, options = {}) {
   const line1Parts = [];
   line1Parts.push(`${COLORS.cyan}${COLORS.bold}${context.model}${COLORS.reset}`);
 
+  const directoryDisplay = formatDirectoryName(context.currentDir, context.gitBranch);
+  if (directoryDisplay) {
+    line1Parts.push(directoryDisplay);
+  }
+
   if (showSession) {
     line1Parts.push(`${COLORS.dim}Sess:${sessionDisplay}${COLORS.reset}`);
   }
@@ -239,6 +256,7 @@ module.exports = {
   COLORS,
   formatTokens,
   formatContextSize,
+  formatDirectoryName,
   makeProgressBar,
   getPercentColor,
   parseContext,
