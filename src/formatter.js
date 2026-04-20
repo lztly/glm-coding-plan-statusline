@@ -57,7 +57,7 @@ function formatDirectoryName(currentDir, gitBranch) {
   if (!dirName) return '';
 
   if (gitBranch) {
-    return `${dirName} (${gitBranch}${COLORS.dim}*${COLORS.reset})`;
+    return `${dirName}(${gitBranch}${COLORS.dim}*${COLORS.reset})`;
   }
   return dirName;
 }
@@ -144,13 +144,16 @@ function formatDetailedRemainingTime(timestamp) {
   if (diffMs <= 0) return '';
 
   const totalMinutes = Math.ceil(diffMs / (1000 * 60));
-  const hours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
+  const totalHours = Math.ceil(totalMinutes / 60);
+  const totalDays = Math.ceil(totalMinutes / (60 * 24));
 
-  if (hours > 0) {
-    return `${hours}h${minutes}m`;
+  if (totalMinutes >= 60 * 24) {
+    return `${totalDays}d`;
   }
-  return `${minutes}m`;
+  if (totalMinutes >= 60) {
+    return `${totalHours}h`;
+  }
+  return `${totalMinutes}m`;
 }
 
 /**
@@ -219,8 +222,12 @@ function formatStatusLine(context, usageData, options = {}) {
     const fiveHourColor = getPercentColor(fiveHourUsed);
     const fiveHourResetIn = formatDetailedRemainingTime(usageData?.quota?.fiveHourQuota?.nextResetTime);
     const fiveHourResetLabel = fiveHourResetIn ? `${COLORS.dim}(${fiveHourResetIn})${COLORS.reset}` : '';
+
     const weeklyColor = getPercentColor(weeklyUsed);
-    barParts.push(`5h${fiveHourColor}${fiveHourUsed}%${COLORS.reset}${fiveHourResetLabel} 7d${weeklyColor}${weeklyUsed}%${COLORS.reset}`);
+    const weeklyResetIn = formatDetailedRemainingTime(usageData?.quota?.weeklyQuota?.nextResetTime);
+    const weeklyResetLabel = weeklyResetIn ? `${COLORS.dim}(${weeklyResetIn})${COLORS.reset}` : '';
+
+    barParts.push(`5h:${fiveHourColor}${fiveHourUsed}%${COLORS.reset}${fiveHourResetLabel} 7d:${weeklyColor}${weeklyUsed}%${COLORS.reset}${weeklyResetLabel}`);
   }
 
   if (showMCP) {

@@ -82,8 +82,8 @@ The generated `.tgz` file is only needed for installation and can be deleted aft
 ## Display Example
 
 ```
-GLM-5 │ glm-coding-plan-statusline (main*) │ Sess:160.0K │ Day:42.8M │ Mon:979.2M
-Ctx █████░░░░░ 68% │ 5h22%(1h30m) 7d41% │ MCP 28%
+GLM-5 │ glm-coding-plan-statusline(main*) │ Sess:160.0K │ Day:42.8M │ Mon:979.2M
+Ctx █████░░░░░ 68% │ 5h:45%(27m) 7d:12%(5d) │ MCP 28%
 ```
 
 ### Fields
@@ -92,7 +92,7 @@ Ctx █████░░░░░ 68% │ 5h22%(1h30m) 7d41% │ MCP 28%
 | Field | Description | Color |
 |-------|-------------|-------|
 | **GLM-5** | Current model | Cyan bold |
-| **glm-coding-plan-statusline (main\*)** | Current directory and Git branch | Default, `*` Gray |
+| **glm-coding-plan-statusline(main\*)** | Current directory and Git branch | Default, `*` Gray |
 | **Sess:160.0K** | Session tokens | Gray |
 | **Day:42.8M** | Daily tokens | Default |
 | **Mon:979.2M** | Monthly tokens | Blue |
@@ -102,7 +102,7 @@ Ctx █████░░░░░ 68% │ 5h22%(1h30m) 7d41% │ MCP 28%
 |-------|-------------|-------------|
 | **Ctx** | Context window usage | Green(<50%) / Yellow(50-80%) / Red(>80%) |
 | **5h** | 5-hour quota used and reset countdown | Green(<50%) / Yellow(50-80%) / Red(>80%) |
-| **7d** | 7-day quota used | Green(<50%) / Yellow(50-80%) / Red(>80%) |
+| **7d** | 7-day quota used and reset countdown | Green(<50%) / Yellow(50-80%) / Red(>80%) |
 | **MCP** | Monthly quota used | Green(<50%) / Yellow(50-80%) / Red(>80%) |
 
 ## GSD Bridge Compatibility
